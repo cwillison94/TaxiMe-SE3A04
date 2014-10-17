@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">TaxiMe</string>
+    <string name="loginemail">Login Email</string>
+    <string name="loginpass">Login Password</string>
+    <string name="login">Login</string>
+    <string name="new_user">New Users Click Here</string>
+    <string name="description"></string>
+    <string name="title_activity_taxi_me_main">TaxiMeMainActivity</string>
+    <string name="drawer_open">open</string>
+    <string name="drawer_closed">closed</string>
+    <string name="req_car">Request Taxi Carpool</string>
+    <string name="offer_car">Offer Taxi Carpool</string>
+    <string name="help">Need help? Click Me or nagivate to the help page in the side menu!</string>
+
+</resources>
