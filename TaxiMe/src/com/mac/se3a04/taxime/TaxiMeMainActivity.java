@@ -44,7 +44,7 @@ public class TaxiMeMainActivity extends Activity {
 		// Add Drawer Item to dataList
 		dataList.add(new DrawerItem("Home", R.drawable.ic_action_home));
 		dataList.add(new DrawerItem("Profile",R.drawable.ic_action_profile));
-		dataList.add(new DrawerItem("Location", R.drawable.ic_action_location));
+		dataList.add(new DrawerItem("Maps", R.drawable.ic_action_location));
 		dataList.add(new DrawerItem("Search", R.drawable.ic_action_search));
 		dataList.add(new DrawerItem("About", R.drawable.ic_action_about));
 		dataList.add(new DrawerItem("Settings", R.drawable.ic_action_settings));
@@ -91,21 +91,21 @@ public class TaxiMeMainActivity extends Activity {
 		Bundle args = new Bundle();
 		switch (possition) {
 		case 0:
+			//home
 			fragment = new FragmentHome();
 			break;
 		case 1:
-			fragment = new FragmentTwo();
-			args.putString(FragmentTwo.ITEM_NAME, dataList.get(possition)
-					.getItemName());
-			args.putInt(FragmentTwo.IMAGE_RESOURCE_ID, dataList.get(possition)
-					.getImgResID());
+			//profile
+			fragment = new FragmentProfile();
+			args.putString(FragmentProfile.NAME_KEY, "Cole Willison");
+			args.putString(FragmentProfile.SEX_KEY, "Male");
+			args.putString(FragmentProfile.PROFF_KEY, "Student");
+			args.putInt(FragmentProfile.AGE_KEY, 20);
+			
 			break;
 		case 2:
-			fragment = new FragmentThree();
-			args.putString(FragmentThree.ITEM_NAME, dataList.get(possition)
-					.getItemName());
-			args.putInt(FragmentThree.IMAGE_RESOURCE_ID, dataList.get(possition)
-					.getImgResID());
+			//location
+			fragment = new FragmentMap();
 			break;
 		case 3:
 			fragment = new FragmentOne();

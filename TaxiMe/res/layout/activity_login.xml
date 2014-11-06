@@ -3,70 +3,95 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="7dp"
+    android:id="@+id/loginForm"
     tools:context="${packageName}.${activityClass}" >
- <!-- #FF51514F -->
 
-    <EditText
-        android:id="@+id/etLoginEmail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="130dp"
-        android:text="test@gmail.com"
-        android:ems="10"
-        android:inputType="textEmailAddress" >
-        <requestFocus />
+    <!-- #FF51514F -->
 
-    </EditText>
-
-    <TextView
-        android:id="@+id/tvLoginEmail"
+    <ScrollView
+        android:id="@+id/scrollView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/etLoginEmail"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="34dp"
-        android:text="@string/loginemail" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" >
 
-    <Button
-        android:id="@+id/bLogin"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/etLoginEmail"
-        android:layout_alignRight="@+id/etLoginEmail"
-        android:layout_below="@+id/etLoginPassword"
-        android:text="@string/login" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/etLoginPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/bLogin"
-        android:layout_below="@+id/tvLoginPassword"
-        android:ems="10"
-        android:inputType="textPassword" >
-    </EditText>
+            <EditText
+                android:id="@+id/etLoginEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="130dp"
+                android:ems="10"
+                android:inputType="textEmailAddress"
+                android:text="cwillison94@gmail.com" >
 
-    <TextView
-        android:id="@+id/tvLoginPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/etLoginEmail"
-        android:layout_centerHorizontal="true"
-        android:text="@string/loginpass" />
+                <requestFocus />
+            </EditText>
 
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp"
-        android:scaleType="fitXY"
-        android:contentDescription="@string/description"
-        android:src="@drawable/taxime_logo_3" />
+            <TextView
+                android:id="@+id/tvLoginEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/etLoginEmail"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="34dp"
+                android:text="@string/loginemail" />
+
+            <Button
+                android:id="@+id/bLogin"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/etLoginEmail"
+                android:layout_alignRight="@+id/etLoginEmail"
+                android:layout_below="@+id/etLoginPassword"
+                android:text="@string/login" />
+
+            <TextView
+                android:id="@+id/tvLoginError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/bLogin"
+                android:layout_centerHorizontal="true"
+                android:textColor="#FF0000"
+                android:text="" />
+
+            <EditText
+                android:id="@+id/etLoginPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/bLogin"
+                android:layout_below="@+id/tvLoginPassword"
+                android:ems="10"
+                android:inputType="textPassword"
+                android:text="password" >
+            </EditText>
+
+            <TextView
+                android:id="@+id/tvLoginPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/etLoginEmail"
+                android:layout_centerHorizontal="true"
+                android:text="@string/loginpass" />
+
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="18dp"
+                android:contentDescription="@string/description"
+                android:scaleType="fitXY"
+                android:src="@drawable/taxime_logo_3" />
+        </RelativeLayout>
+    </ScrollView>
 
     <TextView
         android:id="@+id/tvNewUser"
