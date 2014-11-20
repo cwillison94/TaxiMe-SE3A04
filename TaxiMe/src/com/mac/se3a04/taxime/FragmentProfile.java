@@ -26,9 +26,8 @@ public class FragmentProfile extends Fragment {
 	private final String ageTitle = "Age: ";
 	private final String sexTitle = "Sex: ";
 	private final String proffessionTitle = "Proffession: ";
-	private final String hiddenMessageTitle = "A part of master race? YES";
 	private String name, sex, age, proffession;	
-	private TextView tvName, tvSex, tvProffession, tvAge, tvHiddMess;
+	private TextView tvName, tvSex, tvProffession, tvAge;
 
 	public FragmentProfile(){
 	}
@@ -68,7 +67,7 @@ public class FragmentProfile extends Fragment {
 		name = getArguments().getString(NAME_KEY,"Bob Barker");
 		sex = getArguments().getString(SEX_KEY, "zygote");
 		proffession = getArguments().getString(PROFF_KEY, "paper clip");
-		age = Integer.toString(getArguments().getInt(AGE_KEY,10));
+		age = getArguments().getString(AGE_KEY,"10");
 	}
 
 	private void setUpWidgets(View view) {
@@ -76,14 +75,12 @@ public class FragmentProfile extends Fragment {
 		tvAge = (TextView) view.findViewById(R.id.tvAge);
 		tvProffession = (TextView) view.findViewById(R.id.tvProffession);
 		tvSex = (TextView) view.findViewById(R.id.tvSex);
-		tvHiddMess = (TextView) view.findViewById(R.id.tvMasterRace);
 	}
 	
 	private void populateProfile() {
 		tvName.setText(nameTitle + name); 
 		tvSex.setText(sexTitle + sex); 
 		tvProffession.setText(proffessionTitle + proffession);
-		tvHiddMess.setText(hiddenMessageTitle);
 		tvAge.setText(ageTitle + age);
 	}
 

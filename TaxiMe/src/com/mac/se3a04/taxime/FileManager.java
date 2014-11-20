@@ -17,6 +17,7 @@ import android.content.Context;
  * @since 2014-11-05
  * */
 public class FileManager {
+	public static String fname = "TaxiMeUserEmail.txt";
 	private String fileName;
 	private String path;
 
@@ -47,7 +48,9 @@ public class FileManager {
 	}
 
 	/**
-	 * Reads the data from the specified fileName in the contructor
+	 * Reads the data from the specified fileName in the constructor
+	 * note: calling trim on returned string is necessary to remove any unused bits which can 
+	 * corrupt the link used in the http request
 	 * @param None
 	 * @return String data read at fileName
 	 * 
@@ -59,7 +62,7 @@ public class FileManager {
 		fileInputStream.read(bytes);
 		fileInputStream.close();
 
-		return new String(bytes);
+		return new String(bytes).trim();
 	}
 
 }

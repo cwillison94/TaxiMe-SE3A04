@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">TaxiMe</string>
+    <string name="loginemail">Login Email</string>
+    <string name="loginpass">Login Password</string>
+    <string name="login">Login</string>
+    <string name="new_user">New Users Click Here</string>
+    <string name="description"></string>
+    <string name="title_activity_taxi_me_main">TaxiMeMainActivity</string>
+    <string name="drawer_open">open</string>
+    <string name="drawer_closed">closed</string>
+    <string name="req_car">Request Taxi Carpool</string>
+    <string name="offer_car">Offer Taxi Carpool</string>
+    <string name="help">Need help? Click Me or nagivate to the help page in the side menu!</string>
+    <string name="edit">Edit</string>
+    <string name="login_error">The user email or password you are using is incorrect</string>
+    <string name="title_activity_registration">Registration</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="email">Email</string>
+    <string name="enter_pass">Enter Password</string>
+    <string name="re_enter_pass">Re-enter Password</string>
+    <string name="fname">First Name</string>
+    <string name="lname">Last Name</string>
+    <string name="sex">Gender</string>
+    <string name="proff">Profession</string>
+    <string name="age">Age</string>
+    <string name="submit">Sumbit Registration</string>
+    <string name="registration_exists">User email is already registered!</string>
+    
+
+</resources>

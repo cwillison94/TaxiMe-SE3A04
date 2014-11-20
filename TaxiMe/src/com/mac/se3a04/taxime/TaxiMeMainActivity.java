@@ -2,10 +2,12 @@ package com.mac.se3a04.taxime;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -23,14 +25,18 @@ public class TaxiMeMainActivity extends Activity {
 
 	private CharSequence mDrawerTitle;
 	private CharSequence mTitle;
-	CustomDrawerAdapter adapter;
-
+	private CustomDrawerAdapter adapter;
+	
 	public static List<DrawerItem> dataList;
+	
+	private String userEmail = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_taxi_me_main);
+		
+		userEmail = getIntent().getExtras().getString("email","null");
 
 		// Initializing
 		dataList = new ArrayList<DrawerItem>();
@@ -38,20 +44,18 @@ public class TaxiMeMainActivity extends Activity {
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
-		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
-				GravityCompat.START);
+		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
 		// Add Drawer Item to dataList
 		dataList.add(new DrawerItem("Home", R.drawable.ic_action_home));
-		dataList.add(new DrawerItem("Profile",R.drawable.ic_action_profile));
+		dataList.add(new DrawerItem("Profile", R.drawable.ic_action_profile));
 		dataList.add(new DrawerItem("Maps", R.drawable.ic_action_location));
 		dataList.add(new DrawerItem("Search", R.drawable.ic_action_search));
 		dataList.add(new DrawerItem("About", R.drawable.ic_action_about));
 		dataList.add(new DrawerItem("Settings", R.drawable.ic_action_settings));
 		dataList.add(new DrawerItem("Help", R.drawable.ic_action_help));
-
-		adapter = new CustomDrawerAdapter(this, R.layout.custom_drawer_item,
-				dataList);
+		dataList.add(new DrawerItem("Logout", R.drawable.ic_action_logout));
+		adapter = new CustomDrawerAdapter(this, R.layout.custom_drawer_item, dataList);
 
 		mDrawerList.setAdapter(adapter);
 
@@ -60,9 +64,8 @@ public class TaxiMeMainActivity extends Activity {
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setHomeButtonEnabled(true);
 
-		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-				R.drawable.ic_drawer, R.string.drawer_open,
-				R.string.drawer_closed) {
+		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer,
+				R.string.drawer_open, R.string.drawer_closed) {
 			public void onDrawerClosed(View view) {
 				getActionBar().setTitle(mTitle);
 				invalidateOptionsMenu(); // creates call to
@@ -84,70 +87,74 @@ public class TaxiMeMainActivity extends Activity {
 
 	}
 
-
 	public void SelectItem(int possition) {
 
 		Fragment fragment = null;
 		Bundle args = new Bundle();
 		switch (possition) {
 		case 0:
-			//home
+			// home
 			fragment = new FragmentHome();
 			break;
 		case 1:
-			//profile
+			// profile
 			fragment = new FragmentProfile();
-			args.putString(FragmentProfile.NAME_KEY, "Cole Willison");
-			args.putString(FragmentProfile.SEX_KEY, "Male");
-			args.putString(FragmentProfile.PROFF_KEY, "Student");
-			args.putInt(FragmentProfile.AGE_KEY, 20);
-			
+			UserRecordsDBhandler dbHandler = new UserRecordsDBhandler(this, null);
+			dbHandler.setFlag(UserRecordsDBhandler.FLAG_GET_PROFILE);
+			dbHandler.execute(userEmail);
+			String[] profileAttrib = null;
+			try {
+				profileAttrib = dbHandler.get().split(":");
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+			args.putString(FragmentProfile.NAME_KEY, profileAttrib[0] + " " + profileAttrib[1]);
+			args.putString(FragmentProfile.SEX_KEY, profileAttrib[2]);
+			args.putString(FragmentProfile.PROFF_KEY, profileAttrib[3]);
+			args.putString(FragmentProfile.AGE_KEY, profileAttrib[4]);			
+
 			break;
 		case 2:
-			//location
+			// location
 			fragment = new FragmentMap();
 			break;
 		case 3:
 			fragment = new FragmentOne();
-			args.putString(FragmentOne.ITEM_NAME, dataList.get(possition)
-					.getItemName());
-			args.putInt(FragmentOne.IMAGE_RESOURCE_ID, dataList.get(possition)
-					.getImgResID());
+			args.putString(FragmentOne.ITEM_NAME, dataList.get(possition).getItemName());
+			args.putInt(FragmentOne.IMAGE_RESOURCE_ID, dataList.get(possition).getImgResID());
 			break;
 		case 4:
 			fragment = new FragmentTwo();
-			args.putString(FragmentTwo.ITEM_NAME, dataList.get(possition)
-					.getItemName());
-			args.putInt(FragmentTwo.IMAGE_RESOURCE_ID, dataList.get(possition)
-					.getImgResID());
+			args.putString(FragmentTwo.ITEM_NAME, dataList.get(possition).getItemName());
+			args.putInt(FragmentTwo.IMAGE_RESOURCE_ID, dataList.get(possition).getImgResID());
 			break;
 		case 5:
 			fragment = new FragmentThree();
-			args.putString(FragmentThree.ITEM_NAME, dataList.get(possition)
-					.getItemName());
-			args.putInt(FragmentThree.IMAGE_RESOURCE_ID, dataList.get(possition)
-					.getImgResID());
+			args.putString(FragmentThree.ITEM_NAME, dataList.get(possition).getItemName());
+			args.putInt(FragmentThree.IMAGE_RESOURCE_ID, dataList.get(possition).getImgResID());
 			break;
 		case 6:
 			fragment = new FragmentOne();
-			args.putString(FragmentOne.ITEM_NAME, dataList.get(possition)
-					.getItemName());
-			args.putInt(FragmentOne.IMAGE_RESOURCE_ID, dataList.get(possition)
-					.getImgResID());
+			args.putString(FragmentOne.ITEM_NAME, dataList.get(possition).getItemName());
+			args.putInt(FragmentOne.IMAGE_RESOURCE_ID, dataList.get(possition).getImgResID());
 			break;
+		case 7:
+			new UserAccessController(this, null).logout();
+			return;
 		}
 
 		fragment.setArguments(args);
 		FragmentManager frgManager = getFragmentManager();
-		frgManager.beginTransaction().replace(R.id.content_frame, fragment)
-				.commit();
+		frgManager.beginTransaction().replace(R.id.content_frame, fragment).setTransition(FragmentTransaction.TRANSIT_ENTER_MASK).commit();
 
 		mDrawerList.setItemChecked(possition, true);
 		setTitle(dataList.get(possition).getItemName());
 		mDrawerLayout.closeDrawer(mDrawerList);
 
 	}
-	
+
 	@Override
 	public void setTitle(CharSequence title) {
 		mTitle = title;
@@ -174,16 +181,14 @@ public class TaxiMeMainActivity extends Activity {
 		// ActionBarDrawerToggle will take care of this.
 		if (mDrawerToggle.onOptionsItemSelected(item)) {
 			return true;
-		}
+		}     
 
 		return false;
 	}
 
-	private class DrawerItemClickListener implements
-			ListView.OnItemClickListener {
+	private class DrawerItemClickListener implements ListView.OnItemClickListener {
 		@Override
-		public void onItemClick(AdapterView<?> parent, View view, int position,
-				long id) {
+		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			SelectItem(position);
 
 		}

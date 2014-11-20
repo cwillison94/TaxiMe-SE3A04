@@ -9,61 +9,67 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * This is a wrapper class for the user records database. This is a polymorphic class
- * which is capable of handling login/logout requests, registration requests, and profile information requests.
+ * This is a wrapper class for the user records database. This is a polymorphic
+ * class which is capable of handling login/logout requests, registration
+ * requests, and profile information requests.
+ * 
+ * 
+ * Note: YOU MUST set the static type FLAG in order to properly configure this
+ * class. The default flag is FLAG_LOGIN.
  * 
  * @author Cole Willison
  * @version 0.5
  * @since 2014-11-05
  * 
- * TODO:
- * -Implement Logout
- * -Implement Profile request
+ *        TODO: -Implement Logout -Implement Profile request
  * */
 public class UserRecordsDBhandler extends AsyncTask<String, Void, String> {
 
-	//Flags used to specify which code branch is executed
-	public static int FLAG_LOGIN = -1;
-	public static int FLAG_REGISTRATION = -2;
+	// Flags used to specify which code branch is executed
+	public static final int FLAG_LOGIN = -1;
+	public static final int FLAG_REGISTRATION = -2;
+	public static final int FLAG_LOGOUT = -3;
+	public static final int FLAG_LOGIN_STATUS = -4;
+	public static final int FLAG_GET_PROFILE = -5;
 
-	private int flag;
+	private int flag = FLAG_LOGIN;
 	private Context context;
 	private ProgressDialog dialog;
 	private TextView tvError;
+	private UserAccessController userAccController;
 
 	/**
-	 * Class Constructor. 
-	 * @param Context context application context
-	 * @param TextView tvError where you want to display error messages
-	 * @param int flag choose which mode to put the handler in
+	 * Class Constructor.
+	 * 
+	 * @param Context
+	 *            context application context
+	 * @param TextView
+	 *            tvError where you want to display error messages
 	 * */
-	public UserRecordsDBhandler(Context context, TextView tvError, int flag) {
+	public UserRecordsDBhandler(Context context, TextView tvError) {
 		this.context = context;
-		this.flag = flag;
 		this.tvError = tvError;
-		//showProgressDialog();
+		userAccController = new UserAccessController(this.context, this.tvError);
+
 	}
 
-	//called before execute --> start progress dialog
 	@Override
 	protected void onPreExecute() {
 		showProgressDialog();
 	}
 
 	/**
-	 * Creates and shows a progressDialog which shows the requests handled by excute are being 
-	 * processed
+	 * Creates and shows a progressDialog which shows the requests handled by
+	 * excute are being processed
 	 * 
 	 * @param None
 	 * @return void
@@ -84,8 +90,7 @@ public class UserRecordsDBhandler extends AsyncTask<String, Void, String> {
 			link = String.format(
 					"http://taxime.comeze.com/TaxiMe/select.php?userEmail=%s&userPassword=%s",
 					username, password).toString();
-		} else {
-			// flag == FLAG_REGISTRATION
+		} else if (flag == FLAG_REGISTRATION) {
 
 			String useremail = (String) arg0[0];
 			String password = (String) arg0[1];
@@ -99,13 +104,21 @@ public class UserRecordsDBhandler extends AsyncTask<String, Void, String> {
 					+ "&userEmail=" + useremail + "&userPassword=" + password + "&fname=" + fname
 					+ "&lname=" + lname + "&sex=" + sex + "&proffession=" + proffession + "&age="
 					+ age;
-			
 
 			// link = String
 			// .format("http://taxime.comeze.com/TaxiMe/registration.php?LoginStatus=1&userEmail=%s&userPassword=%s&fname=%s&lname=%s&sex=%s&proffession=%s&age=%s",
 			// useremail, password, fname, lname, sex, proffession,
 			// age).toString();
 
+		} else if (flag == FLAG_LOGIN_STATUS) {
+			String useremail = (String) arg0[0];
+			link = "http://taxime.comeze.com/TaxiMe/getLoginStatus.php?userEmail=" + useremail;
+		} else if (flag == FLAG_GET_PROFILE) {
+			String useremail = (String) arg0[0];
+			link = "http://taxime.comeze.com/TaxiMe/profile.php?userEmail=" + useremail;
+		} else {
+			String useremail = (String) arg0[0];
+			link = "http://taxime.comeze.com/TaxiMe/logout.php?userEmail=" + useremail;
 		}
 		try {
 			HttpClient client = new DefaultHttpClient();
@@ -115,7 +128,8 @@ public class UserRecordsDBhandler extends AsyncTask<String, Void, String> {
 			BufferedReader in = new BufferedReader(new InputStreamReader(response.getEntity()
 					.getContent()));
 
-			StringBuffer sb = new StringBuffer("");
+
+			StringBuffer sb = new StringBuffer();
 			String line = "";
 			while ((line = in.readLine()) != null) {
 				sb.append(line);
@@ -124,31 +138,25 @@ public class UserRecordsDBhandler extends AsyncTask<String, Void, String> {
 			in.close();
 			return sb.toString();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			return new String("Exception: " + e.getMessage());
 		}
-
 	}
 
-	//handles the result from the server
+	// handles the result from the server
 	@Override
-	protected void onPostExecute(String result) {
-		Log.d("TAXI_ME", result);
-		if (result.equals("Accept") || result.equals("LoggedIn") || result.equals("Success")) {
-			//finish the activity associated with the context
-			((Activity) context).finish();
-			context.startActivity(new Intent(this.context, TaxiMeMainActivity.class));
-			if (result.equals("Success")) {
-				Toast.makeText(this.context,"Account was Successfully Created!", Toast.LENGTH_SHORT).show();
-			}
-
-		} else if (result.equals("userExits")) {
-			tvError.setText(this.context.getResources().getString(R.string.registration_exists));
+	protected void onPostExecute(String consoleResult) {
+		Log.d("TAXI_ME", consoleResult);
+		if (flag == FLAG_GET_PROFILE) {
+			Toast.makeText(context, consoleResult, Toast.LENGTH_SHORT).show();
+			
 		} else {
-			//code branch for result.equals("Denied")
-			tvError.setText(this.context.getResources().getString(R.string.login_error));
+			userAccController.processServerResults(consoleResult);
 		}
-		//stop the progress dialog, must to called to avoid memory leak
+		// stop the progress dialog, must to called to avoid memory leak
 		dialog.dismiss();
+	}
+
+	public void setFlag(int flag) {
+		this.flag = flag;
 	}
 }

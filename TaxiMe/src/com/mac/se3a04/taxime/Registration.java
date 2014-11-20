@@ -1,7 +1,5 @@
 package com.mac.se3a04.taxime;
 
-import java.io.IOException;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,7 +7,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * The class handles user registration.
@@ -31,6 +28,7 @@ public class Registration extends Activity implements OnClickListener {
 	private EditText etProffession;
 	private EditText etAge;
 	private TextView tvErrorMessage;
+	private UserAccessController userAccController;
 	private Button bSumbit;
 
 	@Override
@@ -39,10 +37,21 @@ public class Registration extends Activity implements OnClickListener {
 		setContentView(R.layout.activity_registration);
 		setUpWidgets();
 	}
+	
+	
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		userAccController = new UserAccessController(this, tvErrorMessage);
+	}
+
+
 
 	/**
-	 * This method initializes the necessary widgets from the xml file 
-	 * and also sets any OnClickListeners where appropriate
+	 * This method initializes the necessary widgets from the xml file and also
+	 * sets any OnClickListeners where appropriate
+	 * 
 	 * @param None
 	 * @return void
 	 * */
@@ -60,68 +69,16 @@ public class Registration extends Activity implements OnClickListener {
 		bSumbit.setOnClickListener(this);
 	}
 
-	//handles the submit button click
+	// handles the submit button click
 	@Override
 	public void onClick(View v) {
 		// make sure the ID of the touch event is the submit button
 		if (v.getId() == R.id.bSubmitRegistration) {
-			// ensure all fields are not empty
-			if (!(empty(etEmail) || empty(etPassword) || empty(etPassword2) || empty(etFirstName)
-					|| empty(etLastName) || empty(etSex) || empty(etProffession) || empty(etAge))) {
-				// ensure password fields match
-				if (getText(etPassword).equals(getText(etPassword2))) {
-					if (ValidityHelper.isEmailValid(getText(etEmail))
-							&& ValidityHelper.isPasswordValid(getText(etPassword))) {
-						// submit the data to User Records Database and
-						// configure as REGISTRATION
-						new UserRecordsDBhandler(this, tvErrorMessage,
-								UserRecordsDBhandler.FLAG_REGISTRATION).execute(getText(etEmail),
-								getText(etPassword), getText(etFirstName), getText(etLastName),
-								getText(etSex), getText(etProffession), getText(etAge));
-
-						FileManager fileManager = new FileManager(this, fname);
-						try {
-							// attempt to write user email to to file
-							fileManager.writeToFile(getText(etEmail));
-						} catch (IOException e) {
-							Toast.makeText(this, "IO error", Toast.LENGTH_SHORT).show();
-						}
-					} else {
-						//email or password is invalid
-						tvErrorMessage
-								.setText("User email or password is invalid(must be more than 6 characters).");
-					}
-				} else {
-					// if passwords do not match
-					tvErrorMessage.setText("Passwords do not match, please try again.");
-				}
-			} else {
-				// Not all input fields are filled
-				tvErrorMessage.setText("Please fill in all fields.");
-			}
+			userAccController.sumbitRegistration(etEmail.getText().toString(), etPassword.getText()
+					.toString(), etPassword2.getText().toString(),
+					etFirstName.getText().toString(), etLastName.getText().toString(), etSex
+							.getText().toString(), etProffession.getText().toString(), etAge
+							.getText().toString());
 		}
-	}
-
-	/**
-	 * This method returns true if the specified EditText field
-	 * is empty, ie. when it equals the empty string
-	 * 
-	 * @param EditText
-	 * @return Boolean
-	 * */
-	private boolean empty(EditText etField) {
-		return etField.getText().toString().equals("");
-	}
-
-	/**
-	 * This method gets the string within the specified EditText
-	 * field.
-	 * 
-	 * @param EditText
-	 * @return String
-	 * 
-	 * */
-	private String getText(EditText etField) {
-		return etField.getText().toString();
 	}
 }
