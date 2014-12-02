@@ -2,7 +2,6 @@ package com.mac.se3a04.taxime;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -18,6 +17,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.mac.se3a04.taxime.R;
+
 public class TaxiMeMainActivity extends Activity {
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
@@ -29,15 +30,12 @@ public class TaxiMeMainActivity extends Activity {
 	
 	public static List<DrawerItem> dataList;
 	
-	private String userEmail = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_taxi_me_main);
 		
-		userEmail = getIntent().getExtras().getString("email","null");
-
 		// Initializing
 		dataList = new ArrayList<DrawerItem>();
 		mTitle = mDrawerTitle = getTitle();
@@ -94,31 +92,15 @@ public class TaxiMeMainActivity extends Activity {
 		switch (possition) {
 		case 0:
 			// home
-			fragment = new FragmentHome();
+			fragment = new HomePage();
 			break;
 		case 1:
 			// profile
-			fragment = new FragmentProfile();
-			UserRecordsDBhandler dbHandler = new UserRecordsDBhandler(this, null);
-			dbHandler.setFlag(UserRecordsDBhandler.FLAG_GET_PROFILE);
-			dbHandler.execute(userEmail);
-			String[] profileAttrib = null;
-			try {
-				profileAttrib = dbHandler.get().split(":");
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
-			args.putString(FragmentProfile.NAME_KEY, profileAttrib[0] + " " + profileAttrib[1]);
-			args.putString(FragmentProfile.SEX_KEY, profileAttrib[2]);
-			args.putString(FragmentProfile.PROFF_KEY, profileAttrib[3]);
-			args.putString(FragmentProfile.AGE_KEY, profileAttrib[4]);			
-
+			fragment = new Profile();
 			break;
 		case 2:
 			// location
-			fragment = new FragmentMap();
+			fragment = new MapView();
 			break;
 		case 3:
 			fragment = new FragmentOne();

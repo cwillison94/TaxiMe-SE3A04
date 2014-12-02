@@ -6,7 +6,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.mac.se3a04.taxime.R;
 
 /**
  * The class handles user registration.
@@ -24,9 +27,9 @@ public class Registration extends Activity implements OnClickListener {
 	private EditText etPassword2;
 	private EditText etFirstName;
 	private EditText etLastName;
-	private EditText etSex;
 	private EditText etProffession;
 	private EditText etAge;
+	private Spinner spGender;
 	private TextView tvErrorMessage;
 	private UserAccessController userAccController;
 	private Button bSumbit;
@@ -36,6 +39,9 @@ public class Registration extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_registration);
 		setUpWidgets();
+		
+		//adds the back arrow to the action bar
+		getActionBar().setHomeButtonEnabled(true);
 	}
 	
 	
@@ -61,7 +67,7 @@ public class Registration extends Activity implements OnClickListener {
 		etPassword2 = (EditText) findViewById(R.id.etPassword2);
 		etFirstName = (EditText) findViewById(R.id.etFirstName);
 		etLastName = (EditText) findViewById(R.id.etLastName);
-		etSex = (EditText) findViewById(R.id.etSex);
+		spGender = (Spinner) findViewById(R.id.spGender);
 		etProffession = (EditText) findViewById(R.id.etProffession);
 		etAge = (EditText) findViewById(R.id.etAge);
 		bSumbit = (Button) findViewById(R.id.bSubmitRegistration);
@@ -76,8 +82,7 @@ public class Registration extends Activity implements OnClickListener {
 		if (v.getId() == R.id.bSubmitRegistration) {
 			userAccController.sumbitRegistration(etEmail.getText().toString(), etPassword.getText()
 					.toString(), etPassword2.getText().toString(),
-					etFirstName.getText().toString(), etLastName.getText().toString(), etSex
-							.getText().toString(), etProffession.getText().toString(), etAge
+					etFirstName.getText().toString(), etLastName.getText().toString(), String.valueOf(spGender.getSelectedItem()), etProffession.getText().toString().replaceAll(" ","_"), etAge
 							.getText().toString());
 		}
 	}

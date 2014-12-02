@@ -9,12 +9,14 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+
+
+
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -40,25 +42,25 @@ public class UserRecordsDBhandler extends AsyncTask<String, Void, String> {
 	public static final int FLAG_LOGOUT = -3;
 	public static final int FLAG_LOGIN_STATUS = -4;
 	public static final int FLAG_GET_PROFILE = -5;
+	public static final int FLAG_SET_PROFILE = -6;
 
 	private int flag = FLAG_LOGIN;
 	private Context context;
 	private ProgressDialog dialog;
-	private TextView tvError;
-	private UserAccessController userAccController;
+	private UserAccessController uaController;
 
 	/**
 	 * Class Constructor.
 	 * 
 	 * @param Context
 	 *            context application context
-	 * @param TextView
-	 *            tvError where you want to display error messages
+	 * @param UserAccessController
+	 *            the controller that processes database results
+	 * 
 	 * */
-	public UserRecordsDBhandler(Context context, TextView tvError) {
+	public UserRecordsDBhandler(Context context, UserAccessController uaController) {
 		this.context = context;
-		this.tvError = tvError;
-		userAccController = new UserAccessController(this.context, this.tvError);
+		this.uaController = uaController;
 
 	}
 
@@ -105,18 +107,24 @@ public class UserRecordsDBhandler extends AsyncTask<String, Void, String> {
 					+ "&lname=" + lname + "&sex=" + sex + "&proffession=" + proffession + "&age="
 					+ age;
 
-			// link = String
-			// .format("http://taxime.comeze.com/TaxiMe/registration.php?LoginStatus=1&userEmail=%s&userPassword=%s&fname=%s&lname=%s&sex=%s&proffession=%s&age=%s",
-			// useremail, password, fname, lname, sex, proffession,
-			// age).toString();
-
 		} else if (flag == FLAG_LOGIN_STATUS) {
 			String useremail = (String) arg0[0];
 			link = "http://taxime.comeze.com/TaxiMe/getLoginStatus.php?userEmail=" + useremail;
 		} else if (flag == FLAG_GET_PROFILE) {
 			String useremail = (String) arg0[0];
-			link = "http://taxime.comeze.com/TaxiMe/profile.php?userEmail=" + useremail;
+			link = "http://taxime.comeze.com/TaxiMe/profile.php?command=get&userEmail=" + useremail;
+		} else if (flag == FLAG_SET_PROFILE) {
+			String useremail = (String) arg0[0];
+			String fname = (String) arg0[1];
+			String lname = (String) arg0[2];
+			String sex = (String) arg0[3];
+			String proffession = (String) arg0[4];
+			String age = (String) arg0[5];
+			link = "http://taxime.comeze.com/TaxiMe/profile.php?command=set&userEmail=" + useremail + "&fname=" + fname
+					+ "&lname=" + lname + "&sex=" + sex + "&proffession=" + proffession + "&age="
+					+ age;
 		} else {
+			//flag == FLAG_LOGOUT
 			String useremail = (String) arg0[0];
 			link = "http://taxime.comeze.com/TaxiMe/logout.php?userEmail=" + useremail;
 		}
@@ -127,7 +135,6 @@ public class UserRecordsDBhandler extends AsyncTask<String, Void, String> {
 			HttpResponse response = client.execute(request);
 			BufferedReader in = new BufferedReader(new InputStreamReader(response.getEntity()
 					.getContent()));
-
 
 			StringBuffer sb = new StringBuffer();
 			String line = "";
@@ -146,11 +153,10 @@ public class UserRecordsDBhandler extends AsyncTask<String, Void, String> {
 	@Override
 	protected void onPostExecute(String consoleResult) {
 		Log.d("TAXI_ME", consoleResult);
-		if (flag == FLAG_GET_PROFILE) {
+		if (flag == FLAG_GET_PROFILE || flag == FLAG_SET_PROFILE) {
 			Toast.makeText(context, consoleResult, Toast.LENGTH_SHORT).show();
-			
 		} else {
-			userAccController.processServerResults(consoleResult);
+			uaController.processServerResults(consoleResult);
 		}
 		// stop the progress dialog, must to called to avoid memory leak
 		dialog.dismiss();

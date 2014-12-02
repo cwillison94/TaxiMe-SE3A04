@@ -2,20 +2,19 @@ package com.mac.se3a04.taxime;
 
 public class DrawerItem {
 
-	String ItemName;
-	int imgResID;
+	private String itemName;
+	private int imgResID;
 	
 	public DrawerItem(String itemName, int imgResID) {
-		super();
-		ItemName = itemName;
+		this.itemName = itemName;
 		this.imgResID = imgResID;
 	}
 	
 	public String getItemName() {
-		return ItemName;
+		return itemName;
 	}
 	public void setItemName(String itemName) {
-		ItemName = itemName;
+		this.itemName = itemName;
 	}
 	public int getImgResID() {
 		return imgResID;

@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.mac.se3a04.taxime.R;
+
 public class FragmentThree extends Fragment {
 
 	ImageView ivIcon;

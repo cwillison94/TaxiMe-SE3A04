@@ -5,26 +5,10 @@
     android:orientation="vertical"
     android:padding="7dp">
 
-    <ImageView
-        android:id="@+id/ivContactPhto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:adjustViewBounds="true"
-        android:maxHeight="108dp"
-        android:maxWidth="108dp"
-        android:scaleType="fitXY"
-        android:longClickable="true"
-        android:src="@drawable/contact_unkown" />
-
     <TextView
         android:id="@+id/tvName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/ivContactPhto"
-        android:layout_marginLeft="29dp"
-        android:layout_toRightOf="@+id/ivContactPhto"
         android:text=""
         android:textAppearance="?android:attr/textAppearanceMedium" />
 

@@ -96,12 +96,12 @@
                 android:layout_height="wrap_content"
                 android:text="@string/sex" />
 
-            <EditText
-                android:id="@+id/etSex"
+            <Spinner
+                android:id="@+id/spGender"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="text" />"
+                android:entries="@array/gender_array"
+                android:prompt="@string/gender_prompt" />
 
             <TextView
                 android:id="@+id/tvProffession"
@@ -121,6 +121,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/age" />
+
 
             <EditText
                 android:id="@+id/etAge"

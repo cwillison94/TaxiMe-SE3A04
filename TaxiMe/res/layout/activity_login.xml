@@ -28,7 +28,7 @@
                 android:layout_marginTop="130dp"
                 android:ems="10"
                 android:inputType="textEmailAddress"
-                android:text="cwillison94@gmail.com" >
+                android:text="" >
 
                 <requestFocus />
             </EditText>
@@ -69,7 +69,7 @@
                 android:layout_below="@+id/tvLoginPassword"
                 android:ems="10"
                 android:inputType="textPassword"
-                android:text="password" >
+                android:text="" >
             </EditText>
 
             <TextView

@@ -11,11 +11,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.mac.se3a04.taxime.R;
+
 public class CustomDrawerAdapter extends ArrayAdapter<DrawerItem> {
 
-	Context context;
-	List<DrawerItem> drawerItemList;
-	int layoutResID;
+	private Context context;
+	private List<DrawerItem> drawerItemList;
+	private int layoutResID;
 
 	public CustomDrawerAdapter(Context context, int layoutResourceID,
 			List<DrawerItem> listItems) {
@@ -59,7 +61,7 @@ public class CustomDrawerAdapter extends ArrayAdapter<DrawerItem> {
 	}
 
 	private static class DrawerItemHolder {
-		TextView ItemName;
-		ImageView icon;
+		public TextView ItemName;
+		public ImageView icon;
 	}
 }

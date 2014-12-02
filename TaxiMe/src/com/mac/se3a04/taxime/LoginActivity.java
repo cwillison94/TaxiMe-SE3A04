@@ -1,5 +1,6 @@
 package com.mac.se3a04.taxime;
 
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +9,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.mac.se3a04.taxime.R;
 
 /**
  * This class handles user login requests, its is also the entry point for the
@@ -19,8 +22,6 @@ import android.widget.TextView;
  * 
  * */
 public class LoginActivity extends Activity implements OnClickListener {
-	/* APP DEBUG TAG */
-	public static final String DEBUG_TAG = "TAXI_ME";
 	private EditText etLoginEmail;
 	private EditText etLoginPassword;
 	private Button bLogin;
@@ -34,18 +35,17 @@ public class LoginActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.activity_login);
 		setUpWidgets();
 
-		//userAccController = new UserAccessController(getBaseContext(), tvLoginError);
-		//userAccController.attemptAutoLogin();
+		// userAccController = new UserAccessController(getBaseContext(),
+		// tvLoginError);
+		// userAccController.attemptAutoLogin();
 	}
 
-	
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
 		userAccController = new UserAccessController(this, tvLoginError);
 		userAccController.attemptAutoLogin();
 	}
-	
 
 	/**
 	 * This method initializes the necessary widgets from the xml file and also

@@ -1,6 +1,8 @@
 package com.mac.se3a04.taxime;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,18 +15,26 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class UserAccessController {
+import com.mac.se3a04.taxime.R;
+
+public class UserAccessController implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3972557740137497937L;
 	private Context context;
 	private TextView tvError;
 	private UserRecordsDBhandler dbHandler;
+	private FileManager fileManager;
 
 	public UserAccessController(Context context, TextView tvError) {
 		this.context = context;
 		this.tvError = tvError;
+		this.fileManager = new FileManager(this.context, FileManager.fname);
 	}
 
 	public void attemptAutoLogin() {
-		dbHandler = new UserRecordsDBhandler(this.context, this.tvError);
+		dbHandler = new UserRecordsDBhandler(this.context, this);
 		String email = getEmailStored();
 		if (email != null) {
 			dbHandler.setFlag(UserRecordsDBhandler.FLAG_LOGIN_STATUS);
@@ -36,14 +46,19 @@ public class UserAccessController {
 
 	}
 
-	public void login(String email, String password) {
+	public void login(String email, String password){
 		// TODO encrypt password
-		dbHandler = new UserRecordsDBhandler(this.context, this.tvError);
+		dbHandler = new UserRecordsDBhandler(this.context, this);
 		hideKeyboard();
 		if (isEmailValid(email) && isPasswordValid(password)) {
-			dbHandler = new UserRecordsDBhandler(this.context, this.tvError);
+			dbHandler = new UserRecordsDBhandler(this.context, this);
 			dbHandler.setFlag(UserRecordsDBhandler.FLAG_LOGIN);
-			dbHandler.execute(email, password);
+			try {
+				dbHandler.execute(email, Encryption.encrypt(password));
+			} catch (Exception e) {
+				Log.d(Container.DEBUG_TAG, e.getMessage());
+				e.printStackTrace();
+			}
 			writeEmailToStorage(email);
 		} else {
 			this.tvError.setText(this.context.getResources().getString(R.string.login_error));
@@ -52,13 +67,19 @@ public class UserAccessController {
 
 	public void sumbitRegistration(String email, String password, String password2,
 			String firstName, String lastName, String sex, String proffesion, String age) {
-		dbHandler = new UserRecordsDBhandler(this.context, this.tvError);
+		dbHandler = new UserRecordsDBhandler(this.context, this);
 		hideKeyboard();
 		if (!isEmpty(email, password, password2, firstName, lastName, sex, proffesion, age)) {
 			if (password.equals(password2)) {
 				if (isEmailValid(email) && isPasswordValid(password)) {
 					dbHandler.setFlag(UserRecordsDBhandler.FLAG_REGISTRATION);
-					dbHandler.execute(email, password, firstName, lastName, sex, proffesion, age);
+					try {
+						dbHandler.execute(email, Encryption.encrypt(password), firstName, lastName, sex, proffesion, age);
+						writeEmailToStorage(email);
+					} catch (Exception e) {
+						Log.d(Container.DEBUG_TAG, e.getMessage());
+						e.printStackTrace();
+					}
 				} else {
 					displayError("User email or password is invalid. Password must be greater than 6 characters.");
 				}
@@ -79,7 +100,7 @@ public class UserAccessController {
 	 * 
 	 * */
 	public void processServerResults(String result) {
-		Log.d(LoginActivity.DEBUG_TAG, result);
+		Log.d(Container.DEBUG_TAG, result);
 		if (result.equals("Accept") || result.equals("Success") || result.equals("LoggedIn")) {
 			((Activity) this.context).finish();
 			this.context.startActivity(new Intent(this.context, TaxiMeMainActivity.class).putExtra(
@@ -101,7 +122,7 @@ public class UserAccessController {
 	}
 
 	public void logout() {
-		dbHandler = new UserRecordsDBhandler(this.context, this.tvError);
+		dbHandler = new UserRecordsDBhandler(this.context, this);
 		String email = getEmailStored();
 		if (email != null) {
 			dbHandler.setFlag(UserRecordsDBhandler.FLAG_LOGOUT);
@@ -110,7 +131,43 @@ public class UserAccessController {
 		} else {
 			return;
 		}
+	}
+	
+	/**
+	 * profileAttr[0] -> userEmail
+	 * profileAttr[1] -> first name
+	 * profileAttr[2] -> last name
+	 * profileAttr[3] -> sex
+	 * profileAttr[4] -> age
+	 * profileAttr[5] -> profession
+	 * profileAttr[6] -> rating
+	 * */
+	public String[] getProfile() {
+		dbHandler = new UserRecordsDBhandler(this.context, null);
+		dbHandler.setFlag(UserRecordsDBhandler.FLAG_GET_PROFILE);
+		String email = getEmailStored();
+		if (email != null) {
+			dbHandler.execute(email);
 
+		}
+		try {
+			return dbHandler.get().split(":");
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			return null;
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public void setProfile(String fname, String lname, String sex, String prof, String age) {
+		dbHandler = new UserRecordsDBhandler(this.context, null);
+		dbHandler.setFlag(UserRecordsDBhandler.FLAG_SET_PROFILE);
+		String email = getEmailStored();
+		if (email != null) {
+			dbHandler.execute(email,fname, lname, sex, prof, age);
+		}
 	}
 
 	private void displayError(String errorMessage) {
@@ -129,23 +186,21 @@ public class UserAccessController {
 
 	private String getEmailStored() {
 		String emailString = null;
-		FileManager fileManager = new FileManager(this.context, FileManager.fname);
 		try {
 			emailString = fileManager.readFile();
 		} catch (IOException e) {
 			Toast.makeText(this.context, e.toString(), Toast.LENGTH_SHORT).show();
-			Log.d(LoginActivity.DEBUG_TAG, e.toString());
+			Log.d(Container.DEBUG_TAG, e.toString());
 		}
 		return emailString;
 	}
 
 	private void writeEmailToStorage(String email) {
-		FileManager fileManager = new FileManager(this.context, FileManager.fname);
 		try {
 			// attempt to write user email to to file
 			fileManager.writeToFile(email);
 		} catch (IOException e) {
-			Log.d(LoginActivity.DEBUG_TAG, e.toString());
+			Log.d(Container.DEBUG_TAG, e.toString());
 		}
 	}
 
